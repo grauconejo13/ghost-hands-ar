@@ -1,5 +1,5 @@
-import { LED_LESSON } from "./LessonData";
-import type { LessonStep } from "./LessonStep";
+import { LED_LESSON } from "./LessonData.ts";
+import type { LessonStep } from "./LessonStep.ts";
 
 export type LessonSnapshot = Readonly<{
   index: number;
