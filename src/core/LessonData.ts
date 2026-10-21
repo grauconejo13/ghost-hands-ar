@@ -1,4 +1,4 @@
-import type { LessonStep } from "./LessonStep";
+import type { LessonStep } from "./LessonStep.ts";
 
 export const LED_LESSON: readonly LessonStep[] = [
   {
