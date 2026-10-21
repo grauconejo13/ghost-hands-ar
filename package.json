@@ -5,9 +5,13 @@
   "description": "Platform-independent step engine for Ghost Hands AR",
   "scripts": {
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "demo": "node --experimental-strip-types scripts/demo.mjs"
   },
   "engines": {
     "node": ">=22.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }
