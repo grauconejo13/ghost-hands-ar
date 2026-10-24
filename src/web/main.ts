@@ -73,6 +73,7 @@ function stop() {
   if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; }
   video.srcObject = null;
   setActive(false);
+  syncAnalyzeButton();
 }
 async function start() {
   if (!navigator.mediaDevices?.getUserMedia) { el('message').textContent = 'Camera access requires HTTPS or localhost and a compatible browser.'; return; }
@@ -84,6 +85,7 @@ async function start() {
     acquired.getVideoTracks().forEach(t => t.addEventListener('ended', () => { if (stream === acquired) stop(); }));
     await video.play();
     setActive(true); schedule(); sample(true);
+    syncAnalyzeButton();
     el('message').textContent = 'Camera active. Frame analysis is local; no images are uploaded.';
   } catch (err) { stop(); el('message').textContent = 'Camera unavailable: ' + (err instanceof Error ? err.message : String(err)); }
 }
@@ -122,3 +124,48 @@ el('restart').addEventListener('click', () => lesson.restart());
 window.addEventListener('pagehide', () => { stop(); memory.clear(); });
 setActive(false);
 updateCounts();
+
+
+/* Optional, explicit cloud AI request. Periodic camera sampling never uploads frames. */
+const aiPanel = document.createElement('section');
+aiPanel.className = 'panel ai-panel';
+aiPanel.innerHTML = `
+  <div class="panel-title"><div><span class="eyebrow">03 / OPTIONAL CLOUD AI</span><h2>Ask Ghost Hands</h2></div><span class="chip">OPT-IN UPLOAD</span></div>
+  <label class="ai-label" for="ai-question">What do you want help understanding?</label>
+  <input id="ai-question" class="ai-input" maxlength="300" value="What can you see, and what should I learn next?" />
+  <p class="muted">Only pressing Analyze sends one resized JPEG frame to the configured AI provider. It is not saved to session history.</p>
+  <div class="buttons"><button id="analyze" class="primary" disabled>✦ Analyze this view</button></div>
+  <p id="ai-result" class="ai-result" role="status" aria-live="polite">Start the camera to request optional visual guidance.</p>
+`;
+document.querySelector('main')!.append(aiPanel);
+const analyzeButton = el<HTMLButtonElement>('analyze');
+const output = el<HTMLElement>('ai-result');
+let analyzing = false;
+function syncAnalyzeButton() { analyzeButton.disabled = !stream || analyzing; }
+// Observe camera status through the same start / stop controls.
+el('start').addEventListener('click', () => { window.setTimeout(syncAnalyzeButton, 500); });
+el('stop').addEventListener('click', () => { syncAnalyzeButton(); });
+el('flip').addEventListener('click', () => { window.setTimeout(syncAnalyzeButton, 500); });
+analyzeButton.addEventListener('click', async () => {
+  if (!stream || video.readyState < 2 || analyzing) return;
+  analyzing = true; syncAnalyzeButton();
+  output.textContent = 'Examining one snapshot…';
+  try {
+    const capture = document.createElement('canvas');
+    const ratio = Math.min(1, 640 / video.videoWidth);
+    capture.width = Math.max(1, Math.round(video.videoWidth * ratio));
+    capture.height = Math.max(1, Math.round(video.videoHeight * ratio));
+    const context = capture.getContext('2d');
+    if (!context) throw new Error('Canvas unavailable');
+    context.drawImage(video, 0, 0, capture.width, capture.height);
+    const image = capture.toDataURL('image/jpeg', 0.65);
+    const response = await fetch('/api/analyze', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image, question: el<HTMLInputElement>('ai-question').value })
+    });
+    const body: { answer?: string; error?: string } = await response.json();
+    output.textContent = response.ok ? (body.answer || 'No analysis returned.') : (body.error || 'AI request failed.');
+  } catch (error) {
+    output.textContent = 'Analysis unavailable: ' + (error instanceof Error ? error.message : String(error));
+  } finally { analyzing = false; syncAnalyzeButton(); }
+});
