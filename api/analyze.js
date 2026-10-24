@@ -9,6 +9,9 @@ export default async function handler(req, res) {
     try { if (new URL(origin).host !== host) return res.status(403).json({ error: 'Cross-origin request blocked' }); }
     catch { return res.status(403).json({ error: 'Invalid origin' }); }
   }
+  const accessToken = process.env.GHOST_HANDS_DEMO_TOKEN;
+  if (!accessToken) return res.status(503).json({ error: 'Demo access token is not configured.' });
+  if (req.headers['x-ghost-hands-token'] !== accessToken) return res.status(401).json({ error: 'Invalid demo access token.' });
   const key = process.env.OPENAI_API_KEY;
   if (!key) return res.status(503).json({ error: 'AI not configured. Set OPENAI_API_KEY on Vercel.' });
   const { image, question } = req.body || {};
