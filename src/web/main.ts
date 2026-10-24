@@ -133,6 +133,7 @@ aiPanel.innerHTML = `
   <div class="panel-title"><div><span class="eyebrow">03 / OPTIONAL CLOUD AI</span><h2>Ask Ghost Hands</h2></div><span class="chip">OPT-IN UPLOAD</span></div>
   <label class="ai-label" for="ai-question">What do you want help understanding?</label>
   <input id="ai-question" class="ai-input" maxlength="300" value="What can you see, and what should I learn next?" />
+  <label class="ai-label" for="demo-token">Demo access token (kept only in this tab)</label><input id="demo-token" class="ai-input" type="password" autocomplete="off" placeholder="Enter private demo token" />
   <p class="muted">Only pressing Analyze sends one resized JPEG frame to the configured AI provider. It is not saved to session history.</p>
   <div class="buttons"><button id="analyze" class="primary" disabled>✦ Analyze this view</button></div>
   <p id="ai-result" class="ai-result" role="status" aria-live="polite">Start the camera to request optional visual guidance.</p>
@@ -160,7 +161,7 @@ analyzeButton.addEventListener('click', async () => {
     context.drawImage(video, 0, 0, capture.width, capture.height);
     const image = capture.toDataURL('image/jpeg', 0.65);
     const response = await fetch('/api/analyze', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-ghost-hands-token': el<HTMLInputElement>('demo-token').value },
       body: JSON.stringify({ image, question: el<HTMLInputElement>('ai-question').value })
     });
     const body: { answer?: string; error?: string } = await response.json();
