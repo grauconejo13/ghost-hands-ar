@@ -39,6 +39,7 @@ The exact supported tool versions, APIs, simulator capabilities, and submission 
 - [Concept and user journey](docs/CONCEPT.md)
 - [Proposed architecture](docs/ARCHITECTURE.md)
 - [MVP scope and acceptance criteria](docs/MVP.md)
+- [Hackathon submission requirements checklist](docs/HACKATHON_REQUIREMENTS.md)
 
 ## Getting started (planned)
 
