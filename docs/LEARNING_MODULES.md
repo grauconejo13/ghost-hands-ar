@@ -15,3 +15,9 @@ The same pack can eventually drive a browser or Lens Studio instructional card. 
 - **Not yet implemented:** download/install UI, persistent caching, offline file storage, dynamic AI checkpoints, or a SPECS adapter.
 - The AWS pack needs an internet connection to use the actual AWS console. The instructional JSON itself can be distributed without a live AI service.
 - Do not treat the sample as a claim that an AWS account, permissions, costs, or infrastructure configuration has been verified.
+
+## Browser module library (Milestone 7)
+
+The Vite preview now mounts `src/web/LearningModulesUI.ts`. Choose **Download AWS S3 Basics** to fetch and validate the bundled JSON pack, which is cached in this browser's `localStorage`. On later visits the module can be read from storage without fetching it again. Use Back, Next, or Restart to review the instructions; use **Remove saved pack** to delete the browser copy.
+
+This is not a full offline web application: the Vite page itself must already be available (for example via the browser's normal cache), and localStorage may be evicted by the browser. The AWS Management Console requires internet. Course progress remains session-only, and the UI does not execute module instructions or ask an AI to verify them. Test storage behavior in private browsing and on mobile before relying on offline use.
