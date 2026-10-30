@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "aws-s3-basics",
+  "title": "AWS S3 Basics",
+  "summary": "Learn how to plan and review an S3 bucket using the AWS console, without making changes automatically.",
+  "category": "cloud",
+  "requiresInternet": true,
+  "steps": [
+    {
+      "id": "identify",
+      "title": "Find Amazon S3",
+      "instruction": "Open the AWS Management Console using your own account and locate the S3 service. Do not share credentials or screenshots containing secrets.",
+      "checkpoint": "You can identify the S3 service home page."
+    },
+    {
+      "id": "region",
+      "title": "Choose a region",
+      "instruction": "Before creating anything, understand which AWS Region should hold your objects. Check your organization's requirements and data location needs.",
+      "checkpoint": "You can explain why the region matters."
+    },
+    {
+      "id": "access",
+      "title": "Review access settings",
+      "instruction": "Learn about Block Public Access and least-privilege permissions. For practice, keep public access blocked. Don't change live access policies solely on AI advice.",
+      "checkpoint": "You can distinguish public from private bucket access."
+    },
+    {
+      "id": "cost",
+      "title": "Consider costs",
+      "instruction": "Review the applicable storage, requests, and data transfer pricing. Real AWS resources can incur charges. You may complete this lesson without creating a bucket.",
+      "checkpoint": "You know where to check pricing before provisioning."
+    },
+    {
+      "id": "review",
+      "title": "Review the workflow",
+      "instruction": "Summarize the region, security posture, naming constraints, and potential costs. If creating a real bucket, review every setting before submitting.",
+      "checkpoint": "You can describe the planned bucket configuration without exposing account details."
+    }
+  ]
+}

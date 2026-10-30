@@ -1,6 +1,7 @@
 import { LessonController } from '../core/LessonController.ts';
 import { FrameMemory } from '../vision/FrameMemory.ts';
 import './style.css';
+import { mountLearningModules } from './LearningModulesUI.ts';
 
 const lesson = new LessonController();
 const memory = new FrameMemory();
@@ -122,3 +123,5 @@ el('restart').addEventListener('click', () => lesson.restart());
 window.addEventListener('pagehide', () => { stop(); memory.clear(); });
 setActive(false);
 updateCounts();
+
+mountLearningModules(document.querySelector('main')!);
