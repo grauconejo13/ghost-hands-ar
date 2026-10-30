@@ -1,0 +1,10 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { ModuleCatalog, validateModule } from "../src/modules/ModuleCatalog.ts";
+import { ModuleProgress } from "../src/modules/ModuleProgress.ts";
+const sample = { schemaVersion:1,id:"sample",title:"Sample",summary:"Test lesson",category:"other",requiresInternet:false,steps:[{id:"one",title:"One",instruction:"Look at step one",checkpoint:"Done one"},{id:"two",title:"Two",instruction:"Look at step two",checkpoint:"Done two"}] };
+test("validates and installs a module",()=>{const c=new ModuleCatalog();c.add(sample);assert.equal(c.get("sample")?.steps.length,2);assert.equal(c.list().length,1);});
+test("rejects malformed and duplicate packs",()=>{const c=new ModuleCatalog();c.add(sample);assert.throws(()=>c.add(sample),/already/);assert.throws(()=>validateModule({...sample,steps:[sample.steps[0],sample.steps[0]]}),/duplicate/);assert.throws(()=>validateModule({...sample,steps:[]}),/Invalid/);});
+test("module data is copied on installation",()=>{const c=new ModuleCatalog();c.add(sample);sample.steps[0].instruction="Changed";assert.equal(c.get("sample")?.steps[0].instruction,"Look at step one");});
+test("navigates module progress with bounds",()=>{const c=new ModuleCatalog();const p=new ModuleProgress(c.add({...sample,id:"progress"}));assert.equal(p.back(),false);assert.equal(p.next(),true);assert.equal(p.status().complete,true);assert.equal(p.next(),false);p.restart();assert.equal(p.status().index,0);});
+test("uninstalls module from catalog",()=>{const c=new ModuleCatalog();c.add(sample);assert.equal(c.remove("sample"),true);assert.equal(c.get("sample"),undefined);});
