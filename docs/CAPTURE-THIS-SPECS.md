@@ -1,9 +1,9 @@
-# Capture This — SPECS Lens implementation brief
+# Ghost Hands AR: Frame This! — SPECS Lens implementation brief
 
 Status: Hackathon working brief, 2026-11-06. Not a substitute for the required Devpost Learn plan-lens output. This file is a plan, not evidence of implementation.
 
 ## One-sentence pitch
-A quiet photography scout for AR glasses: glance around a scene, receive a simple composition or lighting cue, align a framing guide, and decide when to capture.
+A quiet photography scout for AR glasses: ghostly hands and a subtle framing guide help the wearer notice a composition; the final prompt says **“Capture This!”**.
 
 ## Platform and submission
 - New SPECS Lens built in Lens Studio with CLAD and Lens Studio MCP.
@@ -31,6 +31,7 @@ A quiet photography scout for AR glasses: glance around a scene, receive a simpl
 - Do not assume mobile Camera Kit APIs operate in SPECS Lens.
 - Verify Lens Studio API support through documentation and MCP inspection. State unavailable capabilities clearly.
 - Favor no network dependency or paid API for the judged primary path.
+- Ghostly hands are a visual design goal and should follow a working guide, not block the first demo.
 - No misleading claims of automatic subject recognition, live lighting intelligence, or camera capture when only mocked.
 - Keep interface quiet; one cue at a time.
 - Leave original starter examples intact until prototype runs.
@@ -50,7 +51,7 @@ A quiet photography scout for AR glasses: glance around a scene, receive a simpl
 ## Work order for Claude Code via MCP
 1. Inspect active SPECS scene and project path; inspect supported camera/image access APIs. Do not edit until confirmed.
 2. Run official plan-lens workflow and preserve artifacts; keep scope as described.
-3. Add independent CaptureThis root; build spatial UI and simulated deterministic framing interaction, preserving template examples.
+3. Add independent FrameThisRoot; build spatial UI and simulated deterministic framing interaction, preserving template examples.
 4. Preview, test and report failures.
 5. Implement isolated composition math and lighting math as pure scripts with tests.
 6. Wire real camera input only if supported and accessible in preview.
