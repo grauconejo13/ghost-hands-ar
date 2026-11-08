@@ -1,0 +1,55 @@
+- !<AssetImportMetadata/3dd3ec5d-4244-496a-8fcb-2a888d2d5e64>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 5f70d917-4996-493e-a682-e136b2c4287f
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 5f70d917-4996-493e-a682-e136b2c4287f
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> e3c24dd4-119a-4bbb-b724-cd1a6823cc8b
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/e3c24dd4-119a-4bbb-b724-cd1a6823cc8b>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: b01d81cd-a1ae-4b55-ba1f-bee09735f8d5
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    buttonLabelText: false
+    guideContainer: false
+    instructionText: false
+    scoutButton: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - guideContainer: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      instructionText: !<reference.Text3D> 00000000-0000-0000-0000-000000000000
+      buttonLabelText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      scoutButton: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input SceneObject guideContainer
+    - // @input Component.Text3D instructionText
+    - // @input Component.Text buttonLabelText
+    - // @input AssignableType_1 scoutButton
