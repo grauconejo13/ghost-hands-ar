@@ -24,7 +24,7 @@ Rather than judging photographs after capture, Frame This! aims to offer *in-the
 | Area | Current status |
 | --- | --- |
 | GitHub repository | Existing TypeScript/Vite web learning demo and core lesson/vision code on `main` |
-| Web camera demo | Browser-facing prototype; **not** a SPECS Lens |
+| Web companion demo | Frame This! browser demo: camera or synthetic scene, Scout grid, local brightness + tap-to-mark composition guidance; **not** a SPECS Lens |
 | Lens Studio | SPECS starter project created in a local `Ghost-Hands-AR/` folder, not confirmed committed to GitHub |
 | Lens Studio MCP | Claude Code successfully queried the local Lens Studio scene via MCP |
 | Frame This! spatial UI | Planned, not yet independently demonstrated |
@@ -45,8 +45,8 @@ ghost-hands-ar/
 ├── index.html
 ├── src/
 │   ├── core/                    # Earlier lesson engine
-│   ├── vision/                  # Earlier browser-side frame sampling
-│   └── web/                     # Browser demo; not SPECS
+│   ├── vision/                  # Frame memory, lighting, composition, guidance (pure, tested)
+│   └── web/                     # Frame This! browser companion demo; not SPECS
 ├── tests/                       # Web / core tests
 └── docs/
     ├── CAPTURE-THIS-SPECS.md    # Current Frame This! working brief
@@ -72,9 +72,18 @@ See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separ
 
 Read [Frame This! SPECS working brief](docs/CAPTURE-THIS-SPECS.md).
 
-### Web prototype: separate existing experiment
+### Web companion demo: Frame This! in the browser
 
-The Vite browser demo is an earlier camera-and-learning experiment. It is not a valid substitute for the SPECS Lens.
+The Vite app is a **browser companion demo** of the Frame This! interaction, for judges and testers without Spectacles. It is not a substitute for the SPECS Lens and does not demonstrate native Spectacles camera access, hand tracking or on-device AI.
+
+- **Camera:** start/stop, front/rear switch where the device has more than one camera, clear permission errors.
+- **Try Demo:** a built-in synthetic landscape with four lighting presets and Pan buttons. It works without camera permission and is labeled as simulated.
+- **Scout / Reset:** rule-of-thirds overlay sized to the actual image, and one guidance line at a time.
+- **Analysis:** sampled frames run through `src/vision` (`PhotoAnalysisEngine` → lighting, composition, guidance) locally. Brightness, shadow/highlight share and contrast are shown as measurements.
+- **Subject:** there is no subject detection. Tap the preview to mark your subject; until then it is reported as unknown.
+- **Capture This!:** appears only when the guidance engine returns `ready`. **Save photo** downloads a JPEG to your device; nothing is uploaded.
+
+Details, permissions and limitations: [docs/WEB_PREVIEW.md](docs/WEB_PREVIEW.md).
 
 ```powershell
 npm install
