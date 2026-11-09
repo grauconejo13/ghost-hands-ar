@@ -24,7 +24,7 @@ Rather than judging photographs after capture, Frame This! aims to offer *in-the
 | Area | Current status |
 | --- | --- |
 | GitHub repository | Existing TypeScript/Vite web learning demo and core lesson/vision code on `main` |
-| Web camera demo | Browser-facing prototype; **not** a SPECS Lens |
+| Web companion demo | Frame This! browser demo: viewfinder with one large, automatic guidance cue (camera or synthetic scene), tap-to-mark subject, local brightness analysis, shutter; **not** a SPECS Lens |
 | Lens Studio | SPECS starter project created in a local `Ghost-Hands-AR/` folder, not confirmed committed to GitHub |
 | Lens Studio MCP | Claude Code successfully queried the local Lens Studio scene via MCP |
 | Frame This! spatial UI | Planned, not yet independently demonstrated |
@@ -45,8 +45,8 @@ ghost-hands-ar/
 ├── index.html
 ├── src/
 │   ├── core/                    # Earlier lesson engine
-│   ├── vision/                  # Earlier browser-side frame sampling
-│   └── web/                     # Browser demo; not SPECS
+│   ├── vision/                  # Frame memory, lighting, composition, guidance (pure, tested)
+│   └── web/                     # Frame This! browser companion demo; not SPECS
 ├── tests/                       # Web / core tests
 └── docs/
     ├── CAPTURE-THIS-SPECS.md    # Current Frame This! working brief
@@ -72,9 +72,18 @@ See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separ
 
 Read [Frame This! SPECS working brief](docs/CAPTURE-THIS-SPECS.md).
 
-### Web prototype: separate existing experiment
+### Web companion demo: Frame This! in the browser
 
-The Vite browser demo is an earlier camera-and-learning experiment. It is not a valid substitute for the SPECS Lens.
+The Vite app is a **browser companion demo** of the Frame This! interaction, for judges and testers without Spectacles. It is not a substitute for the SPECS Lens and does not demonstrate native Spectacles camera access, hand tracking or on-device AI.
+
+- **Viewfinder first:** after you press **Enable camera** and grant permission, the camera fills the viewfinder and one large cue appears over it automatically: "Tap your subject", "Look to the right →", "↑ Look up.", "You're off frame.", "It's too dark.", "Ready!", then "Awesome! Capture this!".
+- **Real analysis:** sampled frames run through `src/vision` (`PhotoAnalysisEngine` → `GuidanceEngine`) locally. `src/web/director.ts` only rewords the engine's result and keeps it steady; it never invents a direction or readiness.
+- **Subject:** there is no subject detection. Until you tap your subject, the cue says so and gives no direction.
+- **Shutter:** a camera-style shutter button sits under the viewfinder and lights up when the engine reports ready. "Photo captured" appears only after the image was actually encoded and handed to the browser's download.
+- **Scout grid:** optional toggle for the rule-of-thirds lines.
+- **Try demo · no camera:** a built-in synthetic landscape with lighting presets and arrow buttons to look around. Every cue is labeled "Simulated scene".
+
+Details, permissions and limitations: [docs/WEB_PREVIEW.md](docs/WEB_PREVIEW.md).
 
 ```powershell
 npm install
