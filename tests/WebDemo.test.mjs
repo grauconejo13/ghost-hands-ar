@@ -70,7 +70,7 @@ test("each demo scene produces the intended lighting reading", () => {
 });
 
 test("golden scene stays balanced across the whole pan range", () => {
-  for (const x of [0, 0.2, 0.4, 0.6, 0.8]) {
+  for (const x of [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2]) {
     for (const y of [0, 0.15, 0.3375]) {
       assert.equal(analyzeScene("golden", { x, y }).lighting.condition, "balanced", `${x},${y}`);
     }

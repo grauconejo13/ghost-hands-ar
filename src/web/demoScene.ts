@@ -19,7 +19,7 @@ export const DEMO_SCENES: readonly Readonly<{ id: DemoSceneId; label: string }>[
 
 export const VIEW_W = 1;
 export const VIEW_H = 9 / 16;
-export const WORLD_W = 1.8;
+export const WORLD_W = 2.2;
 export const WORLD_H = 0.9;
 export const PAN_STEP = 0.03;
 export const INITIAL_OFFSET: Point = { x: 0.4, y: 0.12 };

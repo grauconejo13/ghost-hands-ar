@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A mobile-friendly browser demo of the Ghost Hands AR: Frame This! interaction (Scout, a rule-of-thirds guide, one suggestion at a time, Capture This!). It lets people try the idea without Spectacles.
+A mobile-friendly browser demo of the Ghost Hands AR: Frame This! interaction: a camera viewfinder with one large, context-sensitive cue ("Look to the right →", "↑ Look up.", "Ready!", "Awesome! Capture this!") and a shutter. It lets people try the idea without Spectacles.
 
 It is **not** the SPECS Lens. The native Lens Studio project lives in `Ghost-Hands-AR/`. Nothing in this browser demo shows native Spectacles camera access, hand tracking or on-device AI.
 
@@ -32,29 +32,31 @@ The camera works on `localhost` or HTTPS. A phone opening your laptop's LAN addr
 | Piece | File | Notes |
 | --- | --- | --- |
 | UI and camera wiring | `src/web/main.ts` | DOM only; no analysis logic |
+| Cue wording + stability | `src/web/director.ts` | Maps `GuidanceEngine`/`CompositionAnalyzer` output to the on-screen cue; `CueStabilizer` prevents flicker; places the cue away from the subject |
 | Pixels → guidance | `src/web/pipeline.ts` | `rgbaToGray` → `PhotoAnalysisEngine.analyze` (from `src/vision`) |
 | Synthetic demo scene | `src/web/demoScene.ts` | Deterministic landscape, lighting presets, virtual pan |
 | Layout helpers | `src/web/geometry.ts` | Fits the grid to the image (`object-fit: contain` maths) and maps taps to frame coordinates |
 | Read-outs | `src/web/observations.ts` | Measurements as text; no scores |
 | Camera errors | `src/web/cameraErrors.ts` | Permission, missing-camera and in-use messages |
 
-While Scout is on, a frame is sampled every 500 ms and downscaled to 64 px wide. `FrameMemory` (inside `PhotoAnalysisEngine`) skips re-measuring lighting for unchanged frames. Composition is recomputed from the subject point you tapped. `GuidanceEngine` produces the one message shown.
+While a source is active, a frame is sampled every 400 ms and downscaled to 64 px wide. `FrameMemory` (inside `PhotoAnalysisEngine`) skips re-measuring lighting for unchanged frames. Composition is recomputed from the subject point you tapped. `GuidanceEngine` decides what to say; `director.ts` turns it into the large cue. A new cue must appear in 2 consecutive samples, and the current cue must have been visible for at least 1 s, before it changes (a tap resets this so the response is immediate). "Ready!" becomes "Awesome! Capture this!" after it has held for 1.2 s.
 
-Tests for this pipeline: `tests/WebDemo.test.mjs`. They run the demo scenes through the real analyzers and simulate a user tapping the subject and following the pan guidance until Capture This! appears.
+Tests: `tests/Director.test.mjs` (cue mapping, no direction without a subject, anti-flicker, placement) and `tests/WebDemo.test.mjs`. They run the demo scenes through the real analyzers and simulate a user tapping the subject and following the pan guidance until Capture This! appears.
 
 ## Camera permissions and privacy
 
-- The browser asks for camera permission when you press **Start camera**. Audio is never requested.
+- The camera starts only after you press **Enable camera** and grant permission. Audio is never requested.
 - If you deny it, the page explains how to re-enable it, and **Try Demo** keeps working.
 - Frames are analysed in the page and are never uploaded. No analytics, no network calls for analysis.
-- **Stop camera**, switching to the demo, and leaving the page all stop the camera tracks. Reset only exits Scout mode and leaves the camera running.
-- **Save photo** only runs when you press it. It saves a JPEG to your device through the browser's download. There is no server upload.
+- **Stop camera**, switching to the demo, and leaving the page all stop the camera tracks. Reset only clears the marked subject and hides the grid; the camera keeps running.
+- The **shutter** only captures when you press it. It encodes a JPEG and hands it to the browser's download; nothing is uploaded. The page says "Photo captured" only after encoding succeeds. It cannot confirm where the browser stores the file, so it never claims more than that.
 
 ## Limitations (honest list)
 
 - **No subject detection.** The subject is wherever you tap. With a live camera the marker stays fixed on screen and is not tracked; tap again after moving.
 - **Lighting is pixel brightness, not light metering.** Values come from the browser's auto-exposed, white-balanced video, so they describe the rendered image, not the scene's actual light or photographic merit. Thresholds are defaults, not tuned on a photo dataset.
-- **Directions assume a rear camera.** The front-camera preview is not mirrored, and pan/tilt wording may feel reversed when you are facing the camera.
+- **Directions assume a rear camera.** "Look to the right" means turn the camera to the right. The front-camera preview is not mirrored, so the wording may feel reversed when you are facing the camera.
+- **One direction at a time.** When the subject is off on both axes, the cue shows the larger offset first, so it can alternate (for example right, then up) as you converge.
 - **Camera switching** is offered only when the browser reports more than one camera; some browsers ignore the front/rear preference.
 - **Demo mode is simulated.** The scene, lighting presets and pan are synthetic and are labeled as such on screen.
 - **Not yet tested on a physical phone.** Verified in desktop Chrome (headless, including Chrome's built-in fake camera and a denied-permission run) at desktop and 390 px mobile sizes. Test the real iOS Safari and Android Chrome camera paths on a device before demoing.
