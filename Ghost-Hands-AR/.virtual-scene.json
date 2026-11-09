@@ -224,11 +224,8 @@
             },
             "instructionText": {
               "isScriptInput": true,
-              "value": {
-                "UUID": "f060f9b9-3c4a-4de4-97cb-b7777561882a",
-                "name": "Text3D"
-              },
-              "type": "Component.Text3D"
+              "value": null,
+              "type": "Component.Text"
             },
             "scoutButton": {
               "isScriptInput": true,
@@ -262,7 +259,7 @@
       "transform": {
         "position": [
           0,
-          2,
+          0,
           0
         ],
         "rotation": [
@@ -271,8 +268,8 @@
           0
         ],
         "scale": [
-          0.666700005531311,
-          0.666700005531311,
+          1,
+          1,
           1
         ]
       },
@@ -675,8 +672,8 @@
       "transform": {
         "position": [
           0,
-          -9,
-          0
+          9,
+          0.5
         ],
         "rotation": [
           0,
@@ -695,7 +692,7 @@
           "id": "f060f9b9-3c4a-4de4-97cb-b7777561882a",
           "type": "Text3D",
           "name": "Text3D",
-          "enabled": true,
+          "enabled": false,
           "properties": {
             "text": "",
             "font": null,
@@ -851,12 +848,367 @@
             "shadowDensity": 1,
             "renderOrder": 0,
             "name": "Text3D",
-            "enabled": true,
+            "enabled": false,
             "sceneObject": "@sceneObject:FramingInstructionText",
             "isPrefabInstanceRoot": false,
             "hasPrefabChanges": false,
             "id": "f060f9b9-3c4a-4de4-97cb-b7777561882a",
             "type": "Text3D"
+          }
+        },
+        {
+          "id": "a5c4dd63-2ac7-455d-b528-3490bf2031ed",
+          "type": "Text",
+          "name": "Text",
+          "enabled": true,
+          "properties": {
+            "text": "Aim at subject, then Select view",
+            "font": null,
+            "fontSource": null,
+            "size": 40,
+            "weight": null,
+            "italic": null,
+            "preferredStyle": "Regular",
+            "verticalOverflow": {
+              "value": "Overflow",
+              "type": "enum",
+              "enumType": "Editor.Components.VerticalOverflow",
+              "options": [
+                "Overflow",
+                "Truncate",
+                "Shrink"
+              ]
+            },
+            "horizontalOverflow": {
+              "value": "Overflow",
+              "type": "enum",
+              "enumType": "Editor.Components.HorizontalOverflow",
+              "options": [
+                "Overflow",
+                "Truncate",
+                "TruncateFront",
+                "Wrap",
+                "Ellipsis",
+                "EllipsisFront",
+                "Shrink"
+              ]
+            },
+            "textFill.mode": {
+              "value": "Solid",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillMode",
+              "options": [
+                "Solid",
+                "Texture"
+              ]
+            },
+            "textFill.color": {
+              "x": 0.9599999785423279,
+              "y": 0.9300000071525574,
+              "z": 0.8700000047683716,
+              "w": 1
+            },
+            "textFill.texture": null,
+            "textFill.tileCount": 5,
+            "textFill.tileZone": {
+              "value": "Rect",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillTileZone",
+              "options": [
+                "Rect",
+                "Extents",
+                "Character",
+                "Screen"
+              ]
+            },
+            "textFill.textureStretch": {
+              "value": "FitWidth",
+              "type": "enum",
+              "enumType": "Editor.Components.StretchMode",
+              "options": [
+                "Fill",
+                "Fit",
+                "Stretch",
+                "FitHeight",
+                "FitWidth",
+                "FillAndCut"
+              ]
+            },
+            "textFill.id": "70b591c2-9315-4e3c-855b-e69157ee1d47",
+            "textFill.type": "TextFill",
+            "dropshadowSettings.enabled": false,
+            "dropshadowSettings.fill.mode": {
+              "value": "Solid",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillMode",
+              "options": [
+                "Solid",
+                "Texture"
+              ]
+            },
+            "dropshadowSettings.fill.color": {
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "w": 1
+            },
+            "dropshadowSettings.fill.texture": null,
+            "dropshadowSettings.fill.tileCount": 5,
+            "dropshadowSettings.fill.tileZone": {
+              "value": "Rect",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillTileZone",
+              "options": [
+                "Rect",
+                "Extents",
+                "Character",
+                "Screen"
+              ]
+            },
+            "dropshadowSettings.fill.textureStretch": {
+              "value": "FitWidth",
+              "type": "enum",
+              "enumType": "Editor.Components.StretchMode",
+              "options": [
+                "Fill",
+                "Fit",
+                "Stretch",
+                "FitHeight",
+                "FitWidth",
+                "FillAndCut"
+              ]
+            },
+            "dropshadowSettings.fill.id": "1b6582ea-eee4-4fd1-94c0-b5a05525573f",
+            "dropshadowSettings.fill.type": "TextFill",
+            "dropshadowSettings.offset": {
+              "x": 0.25,
+              "y": 0.25
+            },
+            "dropshadowSettings.id": "ad596bc0-5fab-4895-8428-4dfc1713dd58",
+            "dropshadowSettings.type": "DropshadowSettings",
+            "outlineSettings.enabled": true,
+            "outlineSettings.fill.mode": {
+              "value": "Solid",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillMode",
+              "options": [
+                "Solid",
+                "Texture"
+              ]
+            },
+            "outlineSettings.fill.color": {
+              "x": 0.03999999910593033,
+              "y": 0.03999999910593033,
+              "z": 0.05000000074505806,
+              "w": 0.550000011920929
+            },
+            "outlineSettings.fill.texture": null,
+            "outlineSettings.fill.tileCount": 5,
+            "outlineSettings.fill.tileZone": {
+              "value": "Rect",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillTileZone",
+              "options": [
+                "Rect",
+                "Extents",
+                "Character",
+                "Screen"
+              ]
+            },
+            "outlineSettings.fill.textureStretch": {
+              "value": "FitWidth",
+              "type": "enum",
+              "enumType": "Editor.Components.StretchMode",
+              "options": [
+                "Fill",
+                "Fit",
+                "Stretch",
+                "FitHeight",
+                "FitWidth",
+                "FillAndCut"
+              ]
+            },
+            "outlineSettings.fill.id": "94bea5d8-8a18-4ee0-ae6d-42c55a489694",
+            "outlineSettings.fill.type": "TextFill",
+            "outlineSettings.size": 0.12,
+            "outlineSettings.id": "70bac811-55fc-4810-95bc-651de1b312ac",
+            "outlineSettings.type": "OutlineSettings",
+            "backgroundSettings.enabled": false,
+            "backgroundSettings.fill.mode": {
+              "value": "Solid",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillMode",
+              "options": [
+                "Solid",
+                "Texture"
+              ]
+            },
+            "backgroundSettings.fill.color": {
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "w": 1
+            },
+            "backgroundSettings.fill.texture": null,
+            "backgroundSettings.fill.tileCount": 5,
+            "backgroundSettings.fill.tileZone": {
+              "value": "Rect",
+              "type": "enum",
+              "enumType": "Editor.Components.TextFillTileZone",
+              "options": [
+                "Rect",
+                "Extents",
+                "Character",
+                "Screen"
+              ]
+            },
+            "backgroundSettings.fill.textureStretch": {
+              "value": "FitWidth",
+              "type": "enum",
+              "enumType": "Editor.Components.StretchMode",
+              "options": [
+                "Fill",
+                "Fit",
+                "Stretch",
+                "FitHeight",
+                "FitWidth",
+                "FillAndCut"
+              ]
+            },
+            "backgroundSettings.fill.id": "f5f78047-5c4e-4ff5-8d69-627e365265e3",
+            "backgroundSettings.fill.type": "TextFill",
+            "backgroundSettings.margins.leftBottom": {
+              "x": 0,
+              "y": 0
+            },
+            "backgroundSettings.margins.rightTop": {
+              "x": 0,
+              "y": 0
+            },
+            "backgroundSettings.margins.left": 0,
+            "backgroundSettings.margins.right": 0,
+            "backgroundSettings.margins.top": 0,
+            "backgroundSettings.margins.bottom": 0,
+            "backgroundSettings.cornerRadius": 0,
+            "backgroundSettings.id": "48882528-a3e6-4788-aa6f-989170c0851f",
+            "backgroundSettings.type": "BackgroundSettings",
+            "advancedLayout.extentsTarget": null,
+            "advancedLayout.letterSpacing": 0.5,
+            "advancedLayout.lineSpacing": 1,
+            "advancedLayout.capitalizationOverride": {
+              "value": "None",
+              "type": "enum",
+              "enumType": "Editor.Components.CapitalizationOverride",
+              "options": [
+                "None",
+                "AllUpper",
+                "AllLower"
+              ]
+            },
+            "advancedLayout.id": "c82bbbd8-8a2c-4616-8432-923015d2fbe4",
+            "advancedLayout.type": "TextAdvancedLayout",
+            "sizeToFit": false,
+            "enableRichText": false,
+            "letterSpacing": 0.5,
+            "lineSpacing": 1,
+            "depthTest": false,
+            "twoSided": false,
+            "layoutRect.leftBottom": {
+              "x": -5.5,
+              "y": -2
+            },
+            "layoutRect.rightTop": {
+              "x": 5.5,
+              "y": 2
+            },
+            "layoutRect.left": -5.5,
+            "layoutRect.right": 5.5,
+            "layoutRect.top": 2,
+            "layoutRect.bottom": -2,
+            "worldSpaceRect.leftBottom": {
+              "x": -5.5,
+              "y": -2
+            },
+            "worldSpaceRect.rightTop": {
+              "x": 5.5,
+              "y": 2
+            },
+            "worldSpaceRect.left": -5.5,
+            "worldSpaceRect.right": 5.5,
+            "worldSpaceRect.top": 2,
+            "worldSpaceRect.bottom": -2,
+            "debugRenderLayoutRect": false,
+            "capitalizationOverride": {
+              "value": "None",
+              "type": "enum",
+              "enumType": "Editor.Components.CapitalizationOverride",
+              "options": [
+                "None",
+                "AllUpper",
+                "AllLower"
+              ]
+            },
+            "editable": false,
+            "showEditingPreview": true,
+            "touchHandler": null,
+            "stretchMode": {
+              "value": "Stretch",
+              "type": "enum",
+              "enumType": "Editor.Components.StretchMode",
+              "options": [
+                "Fill",
+                "Fit",
+                "Stretch",
+                "FitHeight",
+                "FitWidth",
+                "FillAndCut"
+              ]
+            },
+            "verticalAlignment": {
+              "value": "Center",
+              "type": "enum",
+              "enumType": "Editor.Alignment.Vertical",
+              "options": [
+                "Bottom",
+                "Center",
+                "Top"
+              ]
+            },
+            "horizontalAlignment": {
+              "value": "Center",
+              "type": "enum",
+              "enumType": "Editor.Alignment.Horizontal",
+              "options": [
+                "Left",
+                "Center",
+                "Right"
+              ]
+            },
+            "meshShadowMode": {
+              "value": "None",
+              "type": "enum",
+              "enumType": "Editor.Components.MeshShadowMode",
+              "options": [
+                "None",
+                "Caster",
+                "Receiver"
+              ]
+            },
+            "shadowColor": {
+              "x": 1,
+              "y": 1,
+              "z": 1,
+              "w": 1
+            },
+            "shadowDensity": 1,
+            "renderOrder": 0,
+            "name": "Text",
+            "enabled": true,
+            "sceneObject": "@sceneObject:FramingInstructionText",
+            "isPrefabInstanceRoot": false,
+            "hasPrefabChanges": false,
+            "id": "a5c4dd63-2ac7-455d-b528-3490bf2031ed",
+            "type": "Text"
           }
         }
       ]
@@ -868,9 +1220,9 @@
       "parentId": "c170b160-d83c-42bd-90a0-c671800d4b9f",
       "transform": {
         "position": [
-          0,
-          -12.5,
-          0
+          12,
+          -9,
+          1
         ],
         "rotation": [
           0,
@@ -1094,7 +1446,7 @@
             "text": "Button",
             "font": null,
             "fontSource": null,
-            "size": 48,
+            "size": 30,
             "weight": null,
             "italic": null,
             "preferredStyle": "Regular",
@@ -1132,10 +1484,10 @@
               ]
             },
             "textFill.color": {
-              "x": 1,
-              "y": 1,
-              "z": 1,
-              "w": 1
+              "x": 0.9599999785423279,
+              "y": 0.9300000071525574,
+              "z": 0.8700000047683716,
+              "w": 0.8999999761581421
             },
             "textFill.texture": null,
             "textFill.tileCount": 5,
@@ -1322,7 +1674,7 @@
             "backgroundSettings.id": "c2117788-08a6-4db1-b5e4-5c8845c1bdaa",
             "backgroundSettings.type": "BackgroundSettings",
             "advancedLayout.extentsTarget": null,
-            "advancedLayout.letterSpacing": 0,
+            "advancedLayout.letterSpacing": 1.5,
             "advancedLayout.lineSpacing": 1,
             "advancedLayout.capitalizationOverride": {
               "value": "None",
@@ -1338,7 +1690,7 @@
             "advancedLayout.type": "TextAdvancedLayout",
             "sizeToFit": false,
             "enableRichText": false,
-            "letterSpacing": 0,
+            "letterSpacing": 1.5,
             "lineSpacing": 1,
             "depthTest": false,
             "twoSided": false,
@@ -1435,7 +1787,7 @@
             "enabled": true,
             "sceneObject": "@sceneObject:Label",
             "isPrefabInstanceRoot": false,
-            "hasPrefabChanges": false,
+            "hasPrefabChanges": true,
             "id": "d8e58b80-a745-40d6-996c-fc4fdd664dd2",
             "type": "Text"
           }
@@ -5976,7 +6328,7 @@
     {
       "id": "beae2714-1555-483e-8750-5ad8ad6d00ed",
       "name": "SIKExamples",
-      "enabled": true,
+      "enabled": false,
       "parentId": null,
       "transform": {
         "position": [

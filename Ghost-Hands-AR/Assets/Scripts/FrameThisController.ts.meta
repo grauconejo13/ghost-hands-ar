@@ -42,7 +42,7 @@
     []
   DefaultScriptInputs:
     - guideContainer: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      instructionText: !<reference.Text3D> 00000000-0000-0000-0000-000000000000
+      instructionText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       buttonLabelText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       scoutButton: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
   ScriptTypes:
@@ -50,6 +50,6 @@
       {}
   InputLines:
     - // @input SceneObject guideContainer
-    - // @input Component.Text3D instructionText
+    - // @input Component.Text instructionText
     - // @input Component.Text buttonLabelText
     - // @input AssignableType_1 scoutButton
