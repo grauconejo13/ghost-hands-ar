@@ -6,7 +6,7 @@
 
 Rather than judging photographs after capture, Frame This! aims to offer *in-the-moment* guidance: **“Look up,” “Turn left,” “Try the upper-right third,”** and, when the framing is ready, **“Capture This!”**
 
-> **Status (November 6, 2026):** In active development for the [Learn AR with SPECS hackathon](https://learn-specs.devpost.com/). The Lens Studio SPECS starter scene has been opened and its preview and Claude Code MCP connection checked **locally**. The Frame This! spatial interface, live CV and AI are **not yet verified as implemented**. The local Lens Studio project must be reviewed and committed before it counts as published source.
+> **Status (November 9, 2026):** The native SPECS Lens project is committed on `feature/capture-this-specs`. In local Lens Studio 5.24 Preview, Scout/Reset changed the visible grid and instructions, and TypeScript compilation succeeded (developer-observed). The native Lens currently uses static framing guidance; live subject tracking, on-device lighting CV, and photo capture have **not** been verified in the SPECS runtime. The separately deployed Vercel demo implements browser-based camera analysis and manual subject marking, not native SPECS integration.
 
 ## What we are building
 
@@ -25,10 +25,10 @@ Rather than judging photographs after capture, Frame This! aims to offer *in-the
 | --- | --- |
 | GitHub repository | Existing TypeScript/Vite web learning demo and core lesson/vision code on `main` |
 | Web companion demo | Frame This! browser demo: viewfinder with one large, automatic guidance cue (camera or synthetic scene), tap-to-mark subject, local brightness analysis, shutter; **not** a SPECS Lens |
-| Lens Studio | SPECS starter project created in a local `Ghost-Hands-AR/` folder, not confirmed committed to GitHub |
+| Lens Studio | Native `Ghost-Hands-AR/Ghost-Hands-AR.esproj` committed to `feature/capture-this-specs`; opened and locally tested in Lens Studio 5.24 Preview |
 | Lens Studio MCP | Claude Code successfully queried the local Lens Studio scene via MCP |
-| Frame This! spatial UI | Planned, not yet independently demonstrated |
-| Composition / lighting CV | Planned; device input APIs and accuracy require verification |
+| Frame This! spatial UI | Scout/Reset, grid and instruction states observed in local Lens Studio Preview; no physical SPECS test |
+| Composition / lighting CV | Pure TypeScript calculations tested in browser track; **not wired to native Lens** |
 | Runtime AI | Optional stretch goal; no runtime API key required for base experience |
 | SPECS photography capture | Not yet verified |
 
@@ -55,7 +55,7 @@ ghost-hands-ar/
     └── MVP.md                   # Earlier electronics scope
 ```
 
-The local Lens Studio project resides at `Ghost-Hands-AR/` within the repository working folder, **but has not been verified in the remote GitHub tree**. It should eventually be committed with its native project files and necessary assets while excluding generated caches, local secrets, and machine-specific files. `devpost/` should contain any official planning output after it has actually been generated.
+The native Lens Studio project is tracked at `Ghost-Hands-AR/Ghost-Hands-AR.esproj` on `feature/capture-this-specs`. Open it in Lens Studio 5.24 and verify against [SPECS final QA](docs/SPECS-FINAL-QA.md). Keep generated caches, local secrets, and machine-specific files out of Git. `devpost/` should contain official planning output only after it has actually been generated.
 
 See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separation of responsibilities and integration procedure.
 
@@ -64,8 +64,8 @@ See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separ
 ### SPECS Lens: hackathon priority
 
 1. Verify active project identity and the supported camera, input, and UI APIs with Lens Studio MCP.
-2. Build a **working AR viewfinder and Scout / Reset interaction** in SPECS Preview.
-3. Add deterministic framing guidance and a clearly labeled simulation when live scene tracking is not available.
+2. Re-verify the **implemented AR viewfinder and Scout / Reset interaction** in SPECS Preview.
+3. Preserve the static framing instruction unless a tracked, verified real-input integration is ready; do not imply dynamic composition guidance in the native Lens.
 4. Add isolated luminance and composition calculations **only with verified inputs**.
 5. Add ghost-hand visual treatment if time allows; keep interface legible.
 6. Record actual SPECS Preview behavior and submit the Lens project, documentation, and demo.
