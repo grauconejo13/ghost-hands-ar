@@ -9,13 +9,20 @@ const TARGET_X = -0.105
 const TARGET_Y = -0.068
 const READY_TOLERANCE = 0.025
 
+// HUD typography palette (flat Text, no panels).
+const CUE_COLOR = new vec4(0.96, 0.93, 0.87, 1.0) // warm off-white
+const READY_COLOR = new vec4(0.62, 0.96, 0.80, 1.0) // soft mint
+const LABEL_COLOR = new vec4(0.96, 0.93, 0.87, 0.9)
+const CUE_SIZE = 40
+const READY_SIZE = 46
+
 @component
 export class FrameThisController extends BaseScriptComponent {
   @input
   guideContainer: SceneObject
 
   @input
-  instructionText: Text3D
+  instructionText: Text
 
   @input
   buttonLabelText: Text
@@ -106,6 +113,8 @@ export class FrameThisController extends BaseScriptComponent {
     this.lastCue = cue
     this.lastReady = ready
     this.instructionText.text = cue
+    this.instructionText.textFill.color = ready ? READY_COLOR : CUE_COLOR
+    this.instructionText.size = ready ? READY_SIZE : CUE_SIZE
     if (this.buttonLabelText) {
       this.buttonLabelText.text = ready ? "READY" : (this.subjectWorldDirection ? "Reselect" : "Select view")
     }
@@ -113,9 +122,7 @@ export class FrameThisController extends BaseScriptComponent {
     // The existing button label is the reliable secondary status indicator.
     // It changes colour to confirm readiness without requiring new scene assets.
     if (this.buttonLabelText) {
-      this.buttonLabelText.textFill.color = ready
-        ? new vec4(0.23, 1.0, 0.52, 1.0)
-        : new vec4(1.0, 1.0, 1.0, 1.0)
+      this.buttonLabelText.textFill.color = ready ? READY_COLOR : LABEL_COLOR
     }
     print("[FrameThis] cue=" + cue + " ready=" + ready)
   }
