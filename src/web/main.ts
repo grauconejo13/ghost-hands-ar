@@ -4,16 +4,17 @@
  * pipeline.ts; wording and stabilisation come from director.ts. Frames never
  * leave the page.
  */
-import { PhotoAnalysisEngine, THIRDS_INTERSECTIONS, type PhotoAnalysis, type Point } from '../vision/index.ts';
+import { PhotoAnalysisEngine, THIRDS_INTERSECTIONS, rgbaToGray, type GrayFrame, type PhotoAnalysis, type Point } from '../vision/index.ts';
 import { cameraErrorMessage, INSECURE_CONTEXT_MESSAGE } from './cameraErrors.ts';
 import {
   DEMO_SCENES, INITIAL_OFFSET, frameToWorld, panOffset, renderDemoScene, worldToFrame,
   type DemoSceneId, type PanDirection,
 } from './demoScene.ts';
-import { CueStabilizer, cuePlacement, directorCue, displayHeadline, type StableCue } from './director.ts';
+import { CueStabilizer, directorCue, displayHeadline, pillPlacement, type StableCue } from './director.ts';
 import { clientToFrame, fitContain } from './geometry.ts';
 import { compositionObservations, lightingObservations, type Observation } from './observations.ts';
-import { analysisHeight, analyzeRgba, ANALYSIS_WIDTH } from './pipeline.ts';
+import { analysisHeight, ANALYSIS_WIDTH } from './pipeline.ts';
+import { TapAnchor } from './tapAnchor.ts';
 import './style.css';
 
 type Source = 'none' | 'camera' | 'demo';
@@ -53,10 +54,8 @@ app.innerHTML = `
           </div>
           <span class="target" id="target" hidden></span>
           <span class="subject" id="subject" hidden></span>
-          <div class="cue" id="cue" data-pos="middle" data-kind="waiting">
-            <span class="cue-eyebrow" id="cueEyebrow"></span>
-            <strong class="cue-head" id="cueHead" aria-hidden="true"></strong>
-            <span class="cue-detail" id="cueDetail"></span>
+          <div class="cue" id="cue" data-pos="top" data-kind="waiting" aria-hidden="true">
+            <span class="cue-head" id="cueHead"></span>
           </div>
           <span class="sr-only" id="cueSpoken" role="status" aria-live="polite"></span>
           <span class="badge" id="sourceBadge"></span>
@@ -73,6 +72,8 @@ app.innerHTML = `
           <p class="fine" id="welcomeNote">Your browser will ask for camera permission first. Video is analysed on this device and never uploaded.</p>
         </div>
       </div>
+
+      <p class="cue-detail" id="cueDetail" hidden></p>
 
       <div class="capture-bar" id="captureBar" hidden>
         <button class="side-btn" id="scout" type="button" aria-pressed="false">
@@ -119,7 +120,7 @@ app.innerHTML = `
         <section><span class="label">Light <small id="lightNote"></small></span><dl id="light"></dl></section>
         <section><span class="label">Composition</span><dl id="comp"></dl></section>
       </div>
-      <p class="fine">Directions come from where you tapped your subject; there is no automatic subject detection yet. Light readings are brightness of the camera image, which your browser auto-exposes, not a light meter. Frames are analysed at ${ANALYSIS_WIDTH}px wide in this page and never uploaded.</p>
+      <p class="fine">Directions come from where you tapped your subject; there is no automatic subject detection or tracking yet. On the live camera a tap marks one spot in the frame, so once the view changes Frame This! drops it and asks you to tap again. Light readings are brightness of the camera image, which your browser auto-exposes, not a light meter. Frames are analysed at ${ANALYSIS_WIDTH}px wide in this page and never uploaded.</p>
     </details>
   </main>
 
@@ -158,8 +159,11 @@ let timer: number | undefined;
 let analysis: PhotoAnalysis | null = null;
 /** Cue shown on screen; only analysis ticks advance it (see CueStabilizer). */
 let stable: StableCue | null = null;
-/** Camera: fixed frame point (not tracked). Demo: world point that moves with the simulated pan. */
-let subjectFrame: Point | null = null;
+/**
+ * Camera: the tap is a fixed frame point, never tracked; TapAnchor drops it
+ * once the view changes. Demo: a world point that moves with the simulated pan.
+ */
+const tapAnchor = new TapAnchor();
 let subjectWorld: Point | null = null;
 let scene: DemoSceneId = 'golden';
 let offset: Point = INITIAL_OFFSET;
@@ -195,7 +199,7 @@ function stopTracks() {
 }
 
 function clearSubject() {
-  subjectFrame = null;
+  tapAnchor.clear();
   subjectWorld = null;
 }
 
@@ -282,21 +286,35 @@ function drawDemo() {
 
 function currentSubject(): Point | null {
   if (source === 'demo') return subjectWorld && worldToFrame(subjectWorld, offset);
-  return subjectFrame;
+  const s = tapAnchor.state;
+  return s.status === 'fresh' ? s.point : null;
 }
 
-function tick(force: boolean) {
-  if (source === 'none') return;
-  if (source === 'camera' && (video.readyState < 2 || video.videoWidth === 0)) return;
+/** Downsampled grayscale of the current source, or null when no frame is ready. */
+function sampleGray(): GrayFrame | null {
+  if (source === 'none') return null;
+  if (source === 'camera' && (video.readyState < 2 || video.videoWidth === 0)) return null;
   const [mw, mh] = mediaSize();
   const w = ANALYSIS_WIDTH;
   const h = analysisHeight(mw, mh);
   if (sampler.width !== w || sampler.height !== h) { sampler.width = w; sampler.height = h; }
+  samplerCtx.drawImage(source === 'camera' ? video : demoCanvas, 0, 0, w, h);
+  return rgbaToGray(samplerCtx.getImageData(0, 0, w, h).data, w, h, performance.now());
+}
+
+function tick(force: boolean) {
   try {
-    samplerCtx.drawImage(source === 'camera' ? video : demoCanvas, 0, 0, w, h);
-    const { data } = samplerCtx.getImageData(0, 0, w, h);
-    analysis = analyzeRgba(engine, data, w, h, performance.now(), currentSubject(), force);
-    stable = stabilizer.update(directorCue(analysis), performance.now());
+    const gray = sampleGray();
+    if (!gray) return;
+    let retap = false;
+    if (source === 'camera') {
+      const before = tapAnchor.state.status;
+      retap = tapAnchor.update(gray).status === 'stale';
+      // A stale tap must stop steering at once, not after the stabiliser's hold.
+      if (retap && before !== 'stale') stabilizer.reset();
+    }
+    analysis = engine.analyze(gray, currentSubject(), force);
+    stable = stabilizer.update(directorCue(analysis, { fixedTap: source === 'camera', retap }), performance.now());
   } catch (err) {
     say(`Frame analysis failed: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -307,8 +325,13 @@ frame.addEventListener('click', (e) => {
   if (source === 'none') return;
   const p = clientToFrame(e.clientX, e.clientY, frame.getBoundingClientRect());
   if (!p) return;
-  if (source === 'demo') subjectWorld = frameToWorld(p, offset);
-  else subjectFrame = p;
+  if (source === 'demo') {
+    subjectWorld = frameToWorld(p, offset);
+  } else {
+    const gray = sampleGray();
+    if (!gray) return;
+    tapAnchor.set(p, gray); // the tap is judged against what was on screen when it happened
+  }
   stabilizer.reset(); // a tap is a direct action: respond immediately
   tick(false);
 });
@@ -342,15 +365,16 @@ function render() {
   const headline = displayHeadline(cue, heldMs);
   const celebrate = ready && headline !== cue.headline;
 
-  // Cue card
+  // Guidance pill (one line, never intercepts taps) + detail below the viewfinder
   const cueEl = $('cue');
   cueEl.dataset.kind = cue.kind;
-  const placement = cuePlacement(currentSubject());
+  const placement = pillPlacement(currentSubject());
   cueEl.dataset.pos = placement;
   cueEl.classList.toggle('celebrate', celebrate);
-  $('cueHead').textContent = headline;
-  $('cueDetail').textContent = cue.detail;
-  $('cueEyebrow').textContent = source === 'demo' ? 'Simulated scene' : '';
+  if ($('cueHead').textContent !== headline) $('cueHead').textContent = headline;
+  const detail = $('cueDetail');
+  detail.textContent = cue.detail;
+  detail.hidden = !active || cue.detail === '';
   const spoken = celebrate ? headline : cue.spoken;
   if ($('cueSpoken').textContent !== spoken) $('cueSpoken').textContent = spoken;
 
@@ -360,6 +384,8 @@ function render() {
   grid.toggleAttribute('hidden', !showGrid);
   $('nodes').hidden = !showGrid;
   $('subject').hidden = !known;
+  // Live camera: a dashed ring for a fixed tap point, so it never looks like a track.
+  $('subject').classList.toggle('fixed', source === 'camera');
   $('target').hidden = !known;
   link.toggleAttribute('hidden', !known || known.status === 'aligned');
   frame.classList.toggle('is-ready', ready);
@@ -372,9 +398,11 @@ function render() {
     link.setAttribute('y2', String(known.target.y * 100));
   }
   const badge = $('sourceBadge');
-  // Demo is labelled on the cue itself; the live badge yields to a cue that moved to the top.
-  badge.textContent = 'Live · on this device';
-  badge.hidden = source !== 'camera' || placement !== 'middle';
+  // Corner badge sits on the opposite edge from the pill.
+  badge.textContent = source === 'demo' ? 'Simulated scene' : 'Live · on this device';
+  badge.dataset.kind = source;
+  badge.dataset.pos = placement === 'top' ? 'bottom' : 'top';
+  badge.hidden = !active;
 
   // Controls
   btn.shutter.classList.toggle('ready', ready);

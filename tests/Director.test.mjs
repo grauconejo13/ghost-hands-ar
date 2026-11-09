@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  directorCue, displayHeadline, cuePlacement, CueStabilizer, CAPTURE_HEADLINE, READY_UPGRADE_MS,
+  directorCue, displayHeadline, pillPlacement, CueStabilizer, CAPTURE_HEADLINE, READY_UPGRADE_MS,
+  RETAP_HEADLINE, PILL_ZONE,
 } from "../src/web/director.ts";
 import { analyzeComposition } from "../src/vision/CompositionAnalyzer.ts";
 import { analyzeLighting } from "../src/vision/LightingAnalyzer.ts";
@@ -99,14 +100,46 @@ test("demo scene through the real pipeline: tap the tree, get a direction", () =
   assert.ok(["left", "right", "up", "down"].includes(c.arrow));
 });
 
-// ---------- placement ----------
+// ---------- live-camera taps are fixed points ----------
 
-test("cue card moves away from a subject in the middle band", () => {
-  assert.equal(cuePlacement(null), "middle");
-  assert.equal(cuePlacement({ x: 0.5, y: 0.2 }), "middle");
-  assert.equal(cuePlacement({ x: 0.5, y: 0.9 }), "middle");
-  assert.equal(cuePlacement({ x: 0.5, y: 0.55 }), "upper");
-  assert.equal(cuePlacement({ x: 0.5, y: 0.4 }), "lower");
+test("a stale live tap asks for a fresh tap with no direction or readiness", () => {
+  const c = directorCue(analysisFor(null), { fixedTap: true, retap: true });
+  assert.equal(c.kind, "retap");
+  assert.equal(c.headline, RETAP_HEADLINE);
+  assert.equal(c.arrow, null);
+  assert.equal(c.ready, false);
+  assert.match(c.detail, /doesn't follow the subject/);
+});
+
+test("exposure problems still outrank the re-tap prompt", () => {
+  const c = directorCue(analysisFor(null, DARK), { retap: true });
+  assert.equal(c.kind, "lighting");
+});
+
+test("a live-tap direction tells the user to tap again after moving", () => {
+  const c = directorCue(analysisFor({ x: 0.85, y: 0.34 }), { fixedTap: true });
+  assert.equal(c.headline, "Look to the right →");
+  assert.match(c.detail, /then tap it again/);
+  // The simulated demo tracks its subject, so no re-tap is asked for there.
+  assert.doesNotMatch(directorCue(analysisFor({ x: 0.85, y: 0.34 })).detail, /tap it again/);
+});
+
+// ---------- single-line pill ----------
+
+test("every pill headline is short enough for one line", () => {
+  const subjects = [null, { x: -0.2, y: 0.5 }, { x: 0.85, y: 0.34 }, { x: 0.15, y: 0.34 }, { x: 0.34, y: 0.1 }, { x: 0.34, y: 0.9 }, { x: 2 / 3, y: 2 / 3 }];
+  const headlines = new Set([directorCue(null).headline, CAPTURE_HEADLINE, RETAP_HEADLINE]);
+  for (const s of subjects) headlines.add(directorCue(analysisFor(s)).headline);
+  headlines.add(directorCue(analysisFor(null, DARK)).headline);
+  for (const h of headlines) assert.ok(h.length <= 30, `"${h}" is ${h.length} chars`);
+  assert.ok(headlines.size >= 8);
+});
+
+test("pill stays in the top safe area unless a marked subject is under it", () => {
+  assert.equal(pillPlacement(null), "top");
+  assert.equal(pillPlacement({ x: 0.5, y: 0.5 }), "top");
+  assert.equal(pillPlacement({ x: 0.5, y: 0.95 }), "top");
+  assert.equal(pillPlacement({ x: 0.5, y: PILL_ZONE - 0.01 }), "bottom");
 });
 
 // ---------- stabiliser ----------
