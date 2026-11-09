@@ -6,31 +6,33 @@
 
 Rather than judging photographs after capture, Frame This! aims to offer *in-the-moment* guidance: **“Look up,” “Turn left,” “Try the upper-right third,”** and, when the framing is ready, **“Capture This!”**
 
-> **Status (November 9, 2026):** The native SPECS Lens project is committed on `feature/capture-this-specs`. In local Lens Studio 5.24 Preview, Scout/Reset changed the visible grid and instructions, and TypeScript compilation succeeded (developer-observed). The native Lens currently uses static framing guidance; live subject tracking, on-device lighting CV, and photo capture have **not** been verified in the SPECS runtime. The separately deployed Vercel demo implements browser-based camera analysis and manual subject marking, not native SPECS integration.
+> **Status (November 9, 2026):** The native SPECS Lens is merged on `main` at `Ghost-Hands-AR/Ghost-Hands-AR.esproj`. It implements an **orientation-guided composition guide**: **Select view → directional cues → READY → Reselect**, developed for Lens Studio 5.24.1 Preview. It stores a camera *direction*, not an object: there is no subject recognition, image-based tracking, on-device lighting CV, or photo capture in the native Lens, and no physical SPECS hardware run has been reported. The separately deployed Vercel companion runs browser-based camera analysis with a manually marked subject; it is not native SPECS integration.
 
 ## What we are building
 
-**Primary experience**
-1. **Scout:** Start a quiet composition-guidance mode.
-2. **Frame:** Show an unobtrusive rule-of-thirds guide, eventually represented by translucent *ghost hands* framing the scene.
-3. **Guide:** Offer one small composition or lighting cue at a time.
-4. **Align:** Update the cue as the user repositions the frame, through verified tracking or an explicitly labeled preview simulation.
-5. **Capture This!:** Indicate a promising frame. Actual photo capture is only claimed if confirmed against supported SPECS APIs.
+**Native SPECS Lens (implemented on `main`)**
+1. **Aim:** The framing guide is visible on start; the button reads **Select view**.
+2. **Select view:** Pinching stores the camera's current world-space forward direction (the center of view). The button becomes **Reselect**.
+3. **Directional guidance:** Each frame, the stored direction is re-projected into the current view. One cue at a time — **Turn a little right/left** or **Look up/down a little** — moves it toward a lower-left rule-of-thirds target.
+4. **READY:** Within tolerance, the cue reads **READY! Capture this!** in mint green and the button label shows **READY**.
+5. **Reselect:** Pinch again to choose a new direction. If the selected direction falls behind the user, the Lens asks them to reselect.
 
-**Prototype boundaries:** A rule-of-thirds grid needs no computer vision. Actual subject detection and lighting assessment need a supported image source and testing. Model-generated creative suggestions are optional, not essential to the basic interaction.
+**Planned:** translucent *ghost hands* framing the shot, verified camera-based subject and lighting analysis, and capture through supported SPECS APIs.
+
+**Prototype boundaries:** The orientation guide works best for stationary, distant subjects while the user rotates in place; moving sideways introduces parallax. A rule-of-thirds grid needs no computer vision. Actual subject detection and lighting assessment need a supported image source and testing. Model-generated creative suggestions are optional, not essential to the basic interaction.
 
 ## Current technical state
 
 | Area | Current status |
 | --- | --- |
-| GitHub repository | Existing TypeScript/Vite web learning demo and core lesson/vision code on `main` |
+| GitHub repository | Native Lens, web companion, and tested vision modules merged on `main` |
 | Web companion demo | Frame This! browser demo: viewfinder with one compact, automatic guidance pill (camera or synthetic scene), tap-to-mark subject, local brightness analysis, shutter; **not** a SPECS Lens |
-| Lens Studio | Native `Ghost-Hands-AR/Ghost-Hands-AR.esproj` committed to `feature/capture-this-specs`; opened and locally tested in Lens Studio 5.24 Preview |
-| Lens Studio MCP | Claude Code successfully queried the local Lens Studio scene via MCP |
-| Frame This! spatial UI | Scout/Reset, grid and instruction states observed in local Lens Studio Preview; no physical SPECS test |
+| Lens Studio | Native `Ghost-Hands-AR/Ghost-Hands-AR.esproj` on `main`, targeting Lens Studio 5.24.1; packages and fonts stored with Git LFS |
+| Lens Studio MCP | Claude Code queried and edited the local Lens Studio scene via MCP |
+| Frame This! spatial UI | Orientation guide: Select view → directional cues → READY → Reselect, with flat HUD typography; confirm in Preview before recording. No physical SPECS test |
 | Composition / lighting CV | Pure TypeScript calculations tested in browser track; **not wired to native Lens** |
 | Runtime AI | Optional stretch goal; no runtime API key required for base experience |
-| SPECS photography capture | Not yet verified |
+| SPECS photography capture | Not implemented in the native Lens |
 
 The prior **Light It Up!** breadboard tutorial and modular learning experiments remain useful earlier explorations. They are **not the current hackathon concept** and do not demonstrate Frame This! functionality.
 
@@ -41,6 +43,7 @@ Current tracked files include:
 ```text
 ghost-hands-ar/
 ├── README.md
+├── Ghost-Hands-AR/              # Native Lens Studio SPECS project (Ghost-Hands-AR.esproj)
 ├── package.json                 # Existing Vite/TypeScript web demo
 ├── index.html
 ├── src/
@@ -49,13 +52,15 @@ ghost-hands-ar/
 │   └── web/                     # Frame This! browser companion demo; not SPECS
 ├── tests/                       # Web / core tests
 └── docs/
-    ├── CAPTURE-THIS-SPECS.md    # Current Frame This! working brief
+    ├── CAPTURE-THIS-SPECS.md    # Frame This! working brief
+    ├── SPECS-ORIENTATION-GUIDE.md # Native orientation guide behavior and limits
+    ├── SPECS-FINAL-QA.md        # Preview verification and demo checklist
     ├── CONCEPT.md               # Earlier electronics concept
     ├── ARCHITECTURE.md          # Earlier electronics architecture
     └── MVP.md                   # Earlier electronics scope
 ```
 
-The native Lens Studio project is tracked at `Ghost-Hands-AR/Ghost-Hands-AR.esproj` on `feature/capture-this-specs`. Open it in Lens Studio 5.24 and verify against [SPECS final QA](docs/SPECS-FINAL-QA.md). Keep generated caches, local secrets, and machine-specific files out of Git. `devpost/` should contain official planning output only after it has actually been generated.
+The native Lens Studio project is tracked at `Ghost-Hands-AR/Ghost-Hands-AR.esproj` on `main`. Open it in Lens Studio 5.24.1 and verify against [SPECS final QA](docs/SPECS-FINAL-QA.md). Clone with Git LFS installed so packages and fonts download. Keep generated caches, local secrets, and machine-specific files out of Git. `devpost/` holds official Devpost Learn planning output only if it was actually generated; it is welcomed but not required in the repository.
 
 See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separation of responsibilities and integration procedure.
 
@@ -64,8 +69,8 @@ See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separ
 ### SPECS Lens: hackathon priority
 
 1. Verify active project identity and the supported camera, input, and UI APIs with Lens Studio MCP.
-2. Re-verify the **implemented AR viewfinder and Scout / Reset interaction** in SPECS Preview.
-3. Preserve the static framing instruction unless a tracked, verified real-input integration is ready; do not imply dynamic composition guidance in the native Lens.
+2. Verify the **Select view → directional cues → READY → Reselect** flow in SPECS Preview.
+3. Keep native guidance orientation-based unless a tracked, verified real-input integration is ready; do not imply object tracking.
 4. Add isolated luminance and composition calculations **only with verified inputs**.
 5. Add ghost-hand visual treatment if time allows; keep interface legible.
 6. Record actual SPECS Preview behavior and submit the Lens project, documentation, and demo.
@@ -106,8 +111,8 @@ For every feature, distinguish **implemented**, **tested in Lens Studio Preview*
 
 - Event: [Learn AR with SPECS](https://learn-specs.devpost.com/)
 - Target submission: **Ghost Hands AR: Frame This!**
-- Deadline: November 9, 2026 (confirm timezone and final requirements on the organizer page).
-- Target deliverables: native Lens Studio project, official planning artifacts where required, short working demo, and honest description of limitations.
+- Deadline: November 9, 2026 at 5:00 PM EST (4:00 PM CST).
+- Deliverables: public repo with the native Lens Studio project, a public YouTube demo under 3 minutes showing the Lens working in Preview, a short description, and an honest account of limitations.
 
 ## License
 
