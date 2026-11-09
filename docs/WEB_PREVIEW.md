@@ -1,8 +1,10 @@
-# Ghost Hands Web Preview v0.1
+# Frame This! web companion demo
 
 ## Purpose
 
-This Vite + TypeScript browser app is a **visual prototype**, not the SPECS Lens. It reuses the real `LessonController` and `FrameMemory` from this repository.
+A mobile-friendly browser demo of the Ghost Hands AR: Frame This! interaction: a camera viewfinder with one large, context-sensitive cue ("Look to the right →", "↑ Look up.", "Ready!", "Awesome! Capture this!") and a shutter. It lets people try the idea without Spectacles.
+
+It is **not** the SPECS Lens. The native Lens Studio project lives in `Ghost-Hands-AR/`. Nothing in this browser demo shows native Spectacles camera access, hand tracking or on-device AI.
 
 ## Run locally
 
@@ -10,33 +12,52 @@ Requires Node.js 22.12+.
 
 ```sh
 npm install
-npm run dev
-npm run build
+npm run dev        # http://localhost:5173
 npm test
+npm run typecheck
+npm run build      # outputs dist/ (ignored by Git)
+npm run preview    # serves dist/ on http://localhost:4173
 ```
 
-For the camera, open the local Vite URL on localhost or use an HTTPS deployment. On a separate phone, a localhost URL from a laptop won't be sufficient; use a deployed HTTPS preview.
+The camera works on `localhost` or HTTPS. A phone opening your laptop's LAN address over plain HTTP will not get camera access; use an HTTPS preview deployment instead, or use Try Demo.
 
 ## Vercel
 
-1. Import `grauconejo13/ghost-hands-ar`.
-2. Choose the repo root (`./`).
-3. Framework: Vite. Build: `npm run build`. Output: `dist`.
-4. Push/deploy `feature/lesson-engine` as a **Preview**. Keep `main` as the production branch until reviewed and merged.
-5. Grant browser camera permission after opening the HTTPS preview.
+1. Import `grauconejo13/ghost-hands-ar`, root `./`.
+2. Framework: Vite. Build: `npm run build`. Output: `dist`.
+3. Push the feature branch to get an HTTPS **Preview** URL. Keep `main` as production until reviewed and merged.
 
-## Available controls
+## How it works
 
-- Start/Stop camera, flip preferred front/back camera, and force capture.
-- Sampling rate from 1 to 5 frames/second.
-- Frame counters, activity log, and Clear Session.
-- Independent five-step illustrated LED lesson with Next, Back, Restart.
+| Piece | File | Notes |
+| --- | --- | --- |
+| UI and camera wiring | `src/web/main.ts` | DOM only; no analysis logic |
+| Cue wording + stability | `src/web/director.ts` | Maps `GuidanceEngine`/`CompositionAnalyzer` output to the on-screen cue; `CueStabilizer` prevents flicker; places the cue away from the subject |
+| Pixels → guidance | `src/web/pipeline.ts` | `rgbaToGray` → `PhotoAnalysisEngine.analyze` (from `src/vision`) |
+| Synthetic demo scene | `src/web/demoScene.ts` | Deterministic landscape, lighting presets, virtual pan |
+| Layout helpers | `src/web/geometry.ts` | Fits the grid to the image (`object-fit: contain` maths) and maps taps to frame coordinates |
+| Read-outs | `src/web/observations.ts` | Measurements as text; no scores |
+| Camera errors | `src/web/cameraErrors.ts` | Permission, missing-camera and in-use messages |
 
-**Privacy:** Camera frames are processed in the browser. Only tiny 32 × 24 grayscale thumbnails are stored in an ephemeral in-memory buffer. No frames are uploaded to a server. Browser camera access requires user permission. Stopping the camera stops capture; use Clear Session to erase retained thumbnails, and memory is cleared on page exit. Switching cameras may briefly retain existing session thumbnails until cleared.
+While a source is active, a frame is sampled every 400 ms and downscaled to 64 px wide. `FrameMemory` (inside `PhotoAnalysisEngine`) skips re-measuring lighting for unchanged frames. Composition is recomputed from the subject point you tapped. `GuidanceEngine` decides what to say; `director.ts` turns it into the large cue. A new cue must appear in 2 consecutive samples, and the current cue must have been visible for at least 1 s, before it changes (a tap resets this so the response is immediate). "Ready!" becomes "Awesome! Capture this!" after it has held for 1.2 s.
 
-## Limitations
+Tests: `tests/Director.test.mjs` (cue mapping, no direction without a subject, anti-flicker, placement) and `tests/WebDemo.test.mjs`. They run the demo scenes through the real analyzers and simulate a user tapping the subject and following the pan guidance until Capture This! appears.
 
-- Changes are estimated with pixel differences. Head motion, exposure, and lighting may trigger false positives; small on-screen text changes may be missed.
-- The browser app does **not** interpret frames with AI, track real objects, or annotate physical button coordinates.
-- The illustrated circuit is not an electrical wiring diagram or safety check.
-- Live camera features must be tested on a real device; Vercel deployment is not yet confirmed.
+## Camera permissions and privacy
+
+- The camera starts only after you press **Enable camera** and grant permission. Audio is never requested.
+- If you deny it, the page explains how to re-enable it, and **Try Demo** keeps working.
+- Frames are analysed in the page and are never uploaded. No analytics, no network calls for analysis.
+- **Stop camera**, switching to the demo, and leaving the page all stop the camera tracks. Reset only clears the marked subject and hides the grid; the camera keeps running.
+- The **shutter** only captures when you press it. It encodes a JPEG and hands it to the browser's download; nothing is uploaded. The page says "Photo captured" only after encoding succeeds. It cannot confirm where the browser stores the file, so it never claims more than that.
+
+## Limitations (honest list)
+
+- **No subject detection.** The subject is wherever you tap. With a live camera the marker stays fixed on screen and is not tracked; tap again after moving.
+- **Lighting is pixel brightness, not light metering.** Values come from the browser's auto-exposed, white-balanced video, so they describe the rendered image, not the scene's actual light or photographic merit. Thresholds are defaults, not tuned on a photo dataset.
+- **Directions assume a rear camera.** "Look to the right" means turn the camera to the right. The front-camera preview is not mirrored, so the wording may feel reversed when you are facing the camera.
+- **One direction at a time.** When the subject is off on both axes, the cue shows the larger offset first, so it can alternate (for example right, then up) as you converge.
+- **Camera switching** is offered only when the browser reports more than one camera; some browsers ignore the front/rear preference.
+- **Demo mode is simulated.** The scene, lighting presets and pan are synthetic and are labeled as such on screen.
+- **Not yet tested on a physical phone.** Verified in desktop Chrome (headless, including Chrome's built-in fake camera and a denied-permission run) at desktop and 390 px mobile sizes. Test the real iOS Safari and Android Chrome camera paths on a device before demoing.
+- The old Light It Up! breadboard lesson is no longer shown in the web UI. Its engine (`src/core`) and tests remain in the repo.

@@ -1,67 +1,114 @@
-# Ghost Hands AR
+# Ghost Hands AR: Frame This! 👻📸
 
-**Your hands build. Ghost Hands guides.**
+**See what you've been missing.**
 
-Ghost Hands is a spatial, step-by-step electronics assembly guide designed for the **Learn AR with SPECS 2026 hackathon**. Instead of switching between a wiring diagram and a workbench, a learner follows virtual component guides, animated connection paths, and simple Next/Back instructions in an augmented-reality workspace.
+**Frame This!** is the current hackathon experience within **Ghost Hands AR**: a SPECS augmented-reality photography guide that uses a subtle viewfinder and, eventually, translucent ghost hands to help photographers notice and frame interesting shots.
 
-> **Status:** Concept and planning. No functional Lens or physical circuit verification has been implemented yet.
+Rather than judging photographs after capture, Frame This! aims to offer *in-the-moment* guidance: **“Look up,” “Turn left,” “Try the upper-right third,”** and, when the framing is ready, **“Capture This!”**
 
-## The problem
+> **Status (November 9, 2026):** The native SPECS Lens project is committed on `feature/capture-this-specs`. In local Lens Studio 5.24 Preview, Scout/Reset changed the visible grid and instructions, and TypeScript compilation succeeded (developer-observed). The native Lens currently uses static framing guidance; live subject tracking, on-device lighting CV, and photo capture have **not** been verified in the SPECS runtime. The separately deployed Vercel demo implements browser-based camera analysis and manual subject marking, not native SPECS integration.
 
-A beginner building an electronics project often has to look back and forth between a tutorial, a circuit diagram, and the components on a desk. Ghost Hands explores how spatial guidance could make that process more understandable.
+## What we are building
 
-## Proposed MVP: Light It Up!
+**Primary experience**
+1. **Scout:** Start a quiet composition-guidance mode.
+2. **Frame:** Show an unobtrusive rule-of-thirds guide, eventually represented by translucent *ghost hands* framing the scene.
+3. **Guide:** Offer one small composition or lighting cue at a time.
+4. **Align:** Update the cue as the user repositions the frame, through verified tracking or an explicitly labeled preview simulation.
+5. **Capture This!:** Indicate a promising frame. Actual photo capture is only claimed if confirmed against supported SPECS APIs.
 
-A single guided LED-circuit lesson:
+**Prototype boundaries:** A rule-of-thirds grid needs no computer vision. Actual subject detection and lighting assessment need a supported image source and testing. Model-generated creative suggestions are optional, not essential to the basic interaction.
 
-1. **Prepare:** Position a virtual breadboard guide in the workspace.
-2. **LED:** Highlight the intended LED position and polarity.
-3. **Resistor:** Show the current-limiting resistor placement.
-4. **Connect:** Animate the proposed circuit path.
-5. **Complete:** Illuminate the *virtual* LED and show completion feedback.
+## Current technical state
 
-Users can move forward and backward through instructions, restart the lesson, and, if supported by the target SDK/preview, manipulate the guide through spatial input.
+| Area | Current status |
+| --- | --- |
+| GitHub repository | Existing TypeScript/Vite web learning demo and core lesson/vision code on `main` |
+| Web companion demo | Frame This! browser demo: viewfinder with one large, automatic guidance cue (camera or synthetic scene), tap-to-mark subject, local brightness analysis, shutter; **not** a SPECS Lens |
+| Lens Studio | Native `Ghost-Hands-AR/Ghost-Hands-AR.esproj` committed to `feature/capture-this-specs`; opened and locally tested in Lens Studio 5.24 Preview |
+| Lens Studio MCP | Claude Code successfully queried the local Lens Studio scene via MCP |
+| Frame This! spatial UI | Scout/Reset, grid and instruction states observed in local Lens Studio Preview; no physical SPECS test |
+| Composition / lighting CV | Pure TypeScript calculations tested in browser track; **not wired to native Lens** |
+| Runtime AI | Optional stretch goal; no runtime API key required for base experience |
+| SPECS photography capture | Not yet verified |
 
-**Important:** Completing the walkthrough is not evidence that a real circuit has been wired or powered correctly. The first MVP is instructional visualization, not computer-vision recognition or electrical testing.
+The prior **Light It Up!** breadboard tutorial and modular learning experiments remain useful earlier explorations. They are **not the current hackathon concept** and do not demonstrate Frame This! functionality.
 
-## Proposed technology
+## Repository layout
 
-- Snap Lens Studio and supported SPECS development workflow
-- TypeScript for the lesson state machine
-- SPECS UI/interaction components where supported and compatible
-- Official hackathon planning/agent tools after setup and validation
-- Git and GitHub for source control
+Current tracked files include:
 
-The exact supported tool versions, APIs, simulator capabilities, and submission requirements should be checked against the current official hackathon materials before implementation.
+```text
+ghost-hands-ar/
+├── README.md
+├── package.json                 # Existing Vite/TypeScript web demo
+├── index.html
+├── src/
+│   ├── core/                    # Earlier lesson engine
+│   ├── vision/                  # Frame memory, lighting, composition, guidance (pure, tested)
+│   └── web/                     # Frame This! browser companion demo; not SPECS
+├── tests/                       # Web / core tests
+└── docs/
+    ├── CAPTURE-THIS-SPECS.md    # Current Frame This! working brief
+    ├── CONCEPT.md               # Earlier electronics concept
+    ├── ARCHITECTURE.md          # Earlier electronics architecture
+    └── MVP.md                   # Earlier electronics scope
+```
 
-## Documentation
+The native Lens Studio project is tracked at `Ghost-Hands-AR/Ghost-Hands-AR.esproj` on `feature/capture-this-specs`. Open it in Lens Studio 5.24 and verify against [SPECS final QA](docs/SPECS-FINAL-QA.md). Keep generated caches, local secrets, and machine-specific files out of Git. `devpost/` should contain official planning output only after it has actually been generated.
 
-- [Concept and user journey](docs/CONCEPT.md)
-- [Proposed architecture](docs/ARCHITECTURE.md)
-- [MVP scope and acceptance criteria](docs/MVP.md)
+See [project structure and workstreams](docs/PROJECT-STRUCTURE.md) for the separation of responsibilities and integration procedure.
 
-## Getting started (planned)
+## Development tracks
 
-1. Install the official required Lens Studio version and hackathon tooling using the organizer's current instructions.
-2. Run the official project-planning workflow, retaining its generated artifacts.
-3. Create the Lens Studio project in this repository (or document the correct export structure).
-4. Implement and test the five-step virtual lesson.
-5. Record a short working demo and prepare the Devpost submission.
+### SPECS Lens: hackathon priority
 
-This repository currently contains **planning documents only**. There are no working build commands yet.
+1. Verify active project identity and the supported camera, input, and UI APIs with Lens Studio MCP.
+2. Re-verify the **implemented AR viewfinder and Scout / Reset interaction** in SPECS Preview.
+3. Preserve the static framing instruction unless a tracked, verified real-input integration is ready; do not imply dynamic composition guidance in the native Lens.
+4. Add isolated luminance and composition calculations **only with verified inputs**.
+5. Add ghost-hand visual treatment if time allows; keep interface legible.
+6. Record actual SPECS Preview behavior and submit the Lens project, documentation, and demo.
 
-## Safety and limitations
+Read [Frame This! SPECS working brief](docs/CAPTURE-THIS-SPECS.md).
 
-- Do not use Ghost Hands alone as a wiring safety check.
-- The example circuit must be reviewed for correct component polarity, resistor sizing, and power limits before any real hardware tutorial is provided.
-- Do not connect components to mains electricity.
-- A virtual success state means the instructional steps were completed, not that physical hardware was verified.
+### Web companion demo: Frame This! in the browser
+
+The Vite app is a **browser companion demo** of the Frame This! interaction, for judges and testers without Spectacles. It is not a substitute for the SPECS Lens and does not demonstrate native Spectacles camera access, hand tracking or on-device AI.
+
+- **Viewfinder first:** after you press **Enable camera** and grant permission, the camera fills the viewfinder and one large cue appears over it automatically: "Tap your subject", "Look to the right →", "↑ Look up.", "You're off frame.", "It's too dark.", "Ready!", then "Awesome! Capture this!".
+- **Real analysis:** sampled frames run through `src/vision` (`PhotoAnalysisEngine` → `GuidanceEngine`) locally. `src/web/director.ts` only rewords the engine's result and keeps it steady; it never invents a direction or readiness.
+- **Subject:** there is no subject detection. Until you tap your subject, the cue says so and gives no direction.
+- **Shutter:** a camera-style shutter button sits under the viewfinder and lights up when the engine reports ready. "Photo captured" appears only after the image was actually encoded and handed to the browser's download.
+- **Scout grid:** optional toggle for the rule-of-thirds lines.
+- **Try demo · no camera:** a built-in synthetic landscape with lighting presets and arrow buttons to look around. Every cue is labeled "Simulated scene".
+
+Details, permissions and limitations: [docs/WEB_PREVIEW.md](docs/WEB_PREVIEW.md).
+
+```powershell
+npm install
+npm run dev
+npm test
+npm run build
+```
+
+Use Node.js 22.12+ as declared in `package.json`. Web test/build results must be checked on the actual checkout; presence of scripts alone is not proof they pass.
+
+### AI and privacy
+
+Prioritize local geometry and image-derived heuristics. If an AI snapshot feature is added, it should use explicit user initiation, minimal image retention, server-side credentials, and documented API costs. Do not put service API keys into Lens scripts or commit local environment files.
+
+## Testing and claims
+
+For every feature, distinguish **implemented**, **tested in Lens Studio Preview**, **tested on actual SPECS hardware**, and **planned**. A simulated composition cue is not evidence of real-time object tracking or lighting analysis. “Capture This!” is guidance, not a guarantee of photo quality.
 
 ## Hackathon
 
-Project: **Ghost Hands AR**  
-Event: [Learn AR with SPECS on Devpost](https://learn-specs.devpost.com/)
+- Event: [Learn AR with SPECS](https://learn-specs.devpost.com/)
+- Target submission: **Ghost Hands AR: Frame This!**
+- Deadline: November 9, 2026 (confirm timezone and final requirements on the organizer page).
+- Target deliverables: native Lens Studio project, official planning artifacts where required, short working demo, and honest description of limitations.
 
 ## License
 
-No license has been selected yet. All rights reserved unless a license is added.
+No license selected yet. All rights reserved unless a license is added.
