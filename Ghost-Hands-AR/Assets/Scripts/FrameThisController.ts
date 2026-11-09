@@ -106,6 +106,9 @@ export class FrameThisController extends BaseScriptComponent {
     this.lastCue = cue
     this.lastReady = ready
     this.instructionText.text = cue
+    if (this.buttonLabelText) {
+      this.buttonLabelText.text = ready ? "READY" : (this.subjectWorldDirection ? "Reselect" : "Select view")
+    }
 
     // The existing button label is the reliable secondary status indicator.
     // It changes colour to confirm readiness without requiring new scene assets.
