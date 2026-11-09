@@ -8,7 +8,7 @@
 import type { CompositionKnown, Point } from "../vision/CompositionAnalyzer.ts";
 import type { PhotoAnalysis } from "../vision/PhotoAnalysisEngine.ts";
 
-export type CueKind = "waiting" | "tap-subject" | "off-frame" | "lighting" | "move" | "ready";
+export type CueKind = "waiting" | "tap-subject" | "retap" | "off-frame" | "lighting" | "move" | "ready";
 export type Arrow = "left" | "right" | "up" | "down" | null;
 
 export type DirectorCue = Readonly<{
@@ -46,7 +46,20 @@ function cue(key: string, kind: CueKind, headline: string, detail: string, extra
   return { key, kind, headline, spoken: headline, detail, arrow: null, ready: false, ...extra };
 }
 
-export function directorCue(analysis: PhotoAnalysis | null): DirectorCue {
+export type CueContext = Readonly<{
+  /**
+   * The subject is a fixed tap on a live camera, not a tracked point, so a
+   * direction is valid only until the camera moves.
+   */
+  fixedTap?: boolean;
+  /** The previous tap went stale (view changed or too old); ask for a fresh one. */
+  retap?: boolean;
+}>;
+
+export const RETAP_HEADLINE = "Moved? Tap your subject again";
+export const RETAP_DETAIL = "Your tap marks one spot in the frame. It doesn't follow the subject when the camera moves.";
+
+export function directorCue(analysis: PhotoAnalysis | null, context: CueContext = {}): DirectorCue {
   if (analysis === null) return cue("waiting", "waiting", "Finding your frame…", "");
   const { guidance, composition } = analysis;
 
@@ -66,6 +79,9 @@ export function directorCue(analysis: PhotoAnalysis | null): DirectorCue {
   }
 
   if (composition.status === "unknown") {
+    if (context.retap && composition.reason === "no-subject") {
+      return cue("retap", "retap", RETAP_HEADLINE, RETAP_DETAIL);
+    }
     return composition.reason === "invalid-subject"
       ? cue("off-frame", "off-frame", "You're off frame.", "Your subject left the frame. Look back, or tap it again.")
       : cue("tap-subject", "tap-subject", "Tap your subject", "Automatic subject detection isn't available yet.");
@@ -79,7 +95,9 @@ export function directorCue(analysis: PhotoAnalysis | null): DirectorCue {
   const { horizontal, vertical } = composition.cameraMove;
   const preferHorizontal = Math.abs(composition.dx) >= Math.abs(composition.dy);
   const arrow: Arrow = (preferHorizontal ? horizontal ?? vertical : vertical ?? horizontal) ?? null;
-  const detail = `Bring your subject to the ${thirdName(composition)}.`;
+  const detail = context.fixedTap
+    ? `Bring your subject to the ${thirdName(composition)}, then tap it again.`
+    : `Bring your subject to the ${thirdName(composition)}.`;
   if (arrow === null) return cue("move:nudge", "move", "Almost there.", detail);
   const [headline, spoken] = MOVE_HEADLINES[arrow];
   return cue(`move:${arrow}`, "move", headline, detail, { arrow, spoken });
@@ -90,11 +108,14 @@ export function displayHeadline(c: DirectorCue, heldMs: number): string {
   return c.ready && heldMs >= READY_UPGRADE_MS ? CAPTURE_HEADLINE : c.headline;
 }
 
-/** Where the cue card sits so it avoids a subject in the middle band. */
-export type CuePlacement = "middle" | "upper" | "lower";
-export function cuePlacement(subject: Point | null): CuePlacement {
-  if (subject === null || subject.y < 0.3 || subject.y > 0.7) return "middle";
-  return subject.y >= 0.5 ? "upper" : "lower";
+/**
+ * The guidance pill sits in the top safe area of the viewfinder and drops to
+ * the bottom only when a marked subject is right under it.
+ */
+export type PillPlacement = "top" | "bottom";
+export const PILL_ZONE = 0.18;
+export function pillPlacement(subject: Point | null): PillPlacement {
+  return subject !== null && subject.y < PILL_ZONE ? "bottom" : "top";
 }
 
 export type StabilizerOptions = Readonly<{
