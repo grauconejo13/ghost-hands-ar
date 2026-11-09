@@ -1877,7 +1877,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: -9.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 9.000000, z: 0.500000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1885,6 +1885,7 @@
     []
   Components:
     - !<own> f060f9b9-3c4a-4de4-97cb-b7777561882a
+    - !<own> a5c4dd63-2ac7-455d-b528-3490bf2031ed
 - !<Image/32d33cc3-87ce-417a-bde8-ae8edcec7028>
   PrefabRemaps:
     []
@@ -4471,7 +4472,7 @@
   ScriptInputs:
     "":
       guideContainer: !<reference.SceneObject> 97664b11-5584-435d-9c04-2176bd890eb7
-      instructionText: !<reference.Text3D> f060f9b9-3c4a-4de4-97cb-b7777561882a
+      instructionText: !<reference.Text> a5c4dd63-2ac7-455d-b528-3490bf2031ed
       buttonLabelText: !<reference.Text> d8e58b80-a745-40d6-996c-fc4fdd664dd2
       scoutButton: !<MappingBased.AssignableType_1> 9237515f-2c06-465c-b9fe-4eb9a8a51654
   ScriptTypes:
@@ -5344,9 +5345,9 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 2.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 0.666700, y: 0.666700, z: 1.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 24838caa-8a21-4568-bbed-6373386086a8
@@ -5834,6 +5835,91 @@
   ForceCompound: false
   Intangible: false
   ShowCollider: false
+- !<Text/a5c4dd63-2ac7-455d-b528-3490bf2031ed>
+  PrefabRemaps:
+    []
+  Name: Text
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Text: "Aim at subject, then Select view"
+  CustomMaterial: !<reference> 00000000-0000-0000-0000-000000000000
+  Editable: false
+  ShowEditingPreview: true
+  TouchHandler: !<reference> 00000000-0000-0000-0000-000000000000
+  EnableRichText: false
+  SizeToFit: false
+  FontSize: 40.000000
+  FontSource: !<reference> 3df29d0c-14d5-4a21-b806-f2a4c9b8a77e
+  PreferredStyle: Medium
+  LayoutRect:
+    left: -5.500000
+    bottom: -2.000000
+    right: 5.500000
+    top: 2.000000
+  DebugRenderLayoutRect: false
+  OverflowVertical: Overflow
+  OverflowHorizontal: Wrap
+  Fill: !<TextFill>
+    Mode: Solid
+    Color: {x: 0.960000, y: 0.930000, z: 0.870000, w: 1.000000}
+    Texture: !<reference> 00000000-0000-0000-0000-000000000000
+    ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+    TileCount: 5.000000
+    TileZone: Rect
+    TextureStretch: FitWidth
+  BlendMode: PremultipliedAlphaAuto
+  Outline: !<OutlineSettings>
+    Enabled: true
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.040000, y: 0.040000, z: 0.050000, w: 0.550000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    Size: 0.120000
+  Dropshadow: !<DropshadowSettings>
+    Enabled: false
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    OffsetX: 0.250000
+    OffsetY: 0.250000
+  Background: !<BackgroundSettings>
+    Enabled: false
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    Margins:
+      left: 0.000000
+      bottom: 0.000000
+      right: 0.000000
+      top: 0.000000
+    CornerRadius: 0.000000
+  AdvancedLayout: !<TextAdvancedLayout>
+    ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
+    LetterSpacing: 0.000000
+    LineSpacing: 1.000000
+    CapitalizationOverride: None
+  DepthTest: false
+  TwoSided: false
 - !<SceneObject/a7e58f02-9be0-4de9-9945-780d7b29bebe>
   PrefabRemaps:
     []
@@ -6899,7 +6985,7 @@
     - fa104dde-c383-42e2-851a-3d782fc41b3f: 737c1da7-fc67-4d97-44e4-019e8bd3fdc7
     - fa4a4289-98a9-4a8f-9965-16e63cda1ad0: 1cffd4fc-cf46-4ac2-7349-926540d00423
   Name: SIKExamples
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -7775,8 +7861,8 @@
   TouchHandler: !<reference> 00000000-0000-0000-0000-000000000000
   EnableRichText: false
   SizeToFit: false
-  FontSize: 48.000000
-  FontSource: !<reference> 00000000-0000-0000-0000-000000000000
+  FontSize: 30.000000
+  FontSource: !<reference> 1ea07411-a142-4b28-b14c-42e18d7607a1
   PreferredStyle: Regular
   LayoutRect:
     left: -7.500000
@@ -7788,7 +7874,7 @@
   OverflowHorizontal: Overflow
   Fill: !<TextFill>
     Mode: Solid
-    Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+    Color: {x: 0.960000, y: 0.930000, z: 0.870000, w: 0.900000}
     Texture: !<reference> 00000000-0000-0000-0000-000000000000
     ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
     TileCount: 5.000000
@@ -7838,7 +7924,7 @@
     ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
     LetterSpacing: 0.000000
     LineSpacing: 1.000000
-    CapitalizationOverride: None
+    CapitalizationOverride: AllUpper
   DepthTest: false
   TwoSided: false
 - !<ScriptComponent/dacaa0b9-0ffc-415c-8882-1f99561e39b9>
@@ -8637,7 +8723,7 @@
   PrefabRemaps:
     []
   Name: Text3D
-  Enabled: true
+  Enabled: false
   RenderOrder: 0
   StretchMode: Stretch
   VerticalAlignment: Center
@@ -8656,7 +8742,7 @@
   FontSize: 48.000000
   ExtrusionDepth: 0.400000
   ExtrudeDirection: Both
-  FontSource: !<reference> 00000000-0000-0000-0000-000000000000
+  FontSource: !<reference> 157bc00a-a46c-41a3-adf5-032e4748dd5e
   PreferredStyle: Regular
   LayoutRect:
     left: -7.500000
@@ -8784,7 +8870,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: -12.500000, z: 0.000000}
+    Position: {x: 12.000000, y: -9.000000, z: 1.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
