@@ -1,10 +1,10 @@
 # SPECS Orientation Guide: Select → Move → Ready
 
-**Status:** Native code pushed for Lens Studio verification. **Not yet compiled or tested in Lens Studio Preview.** Do not merge into main or claim functioning on hardware until verified.
+**Status:** Merged on `main` (PR #6) and is the current native Frame This! interaction. Developed for Lens Studio 5.24.1 Preview; confirm the flow in Preview before recording. No physical SPECS hardware run has been reported.
 
 ## Behavior
 
-This experiment replaces the native Scout/Reset interaction using the *same* scene component bindings (no new packages, objects, or prefab dependencies):
+This replaced the earlier native Scout/Reset interaction using the *same* scene component bindings (no new packages, objects, or prefab dependencies):
 
 1. **Aim at subject:** The framing guide is enabled on Lens start; the existing button reads **Select view**.
 2. **Select:** Activating the existing button stores the camera's current **world-space forward direction** (initially at the center of view). The button becomes **Reselect**.
@@ -20,19 +20,15 @@ This experiment replaces the native Scout/Reset interaction using the *same* sce
 - No SPECS photo capture, lighting analysis, network backend or paid model is wired in.
 - Green feedback is currently applied to the existing button label, **not the whole framing grid**.
 
-## Test on your local machine
+## Verify in Lens Studio Preview
 
-1. First preserve a recording of the existing working `feature/capture-this-specs` Lens.
-2. Fetch this branch and only switch if Git allows it without overwriting untracked local packages.
-3. Open `Ghost-Hands-AR/Ghost-Hands-AR.esproj` in **Lens Studio 5.24.1**.
-4. Check TypeScript Status and Logger immediately. If the new script fails compilation, stop and keep the stable branch for submission.
-5. Confirm on entering Preview that the grid is visible and button says **Select view** (not Scout).
-6. Select view; rotate the Preview camera slightly right, then up. Confirm the cue changes from camera orientation (not a timer).
-7. Find READY, check the green label; reselect and confirm it resets.
-8. Verify instructions correspond to actual Preview camera movement; if inverted, do not submit this experimental version.
-9. Record this flow only if compilation and behavior pass.
-
-**Recovery:** `git switch feature/capture-this-specs` returns to the verified static Scout/Reset version, provided there are no blocking uncommitted changes.
+1. Pull `main` with Git LFS installed and open `Ghost-Hands-AR/Ghost-Hands-AR.esproj` in **Lens Studio 5.24.1**.
+2. Check TypeScript Status and Logger. Stop and capture the error if compilation fails.
+3. On entering Preview, confirm the grid is visible and the button says **Select view**.
+4. Select view; rotate the Preview camera slightly right, then up. Confirm the cue follows camera orientation (not a timer).
+5. Find READY and check the green cue and label; select again and confirm **Reselect** works.
+6. If directions appear inverted, note it rather than changing code before the deadline.
+7. Record this flow for the demo.
 
 ## Technical assumptions to verify
 
